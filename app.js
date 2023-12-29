@@ -9,6 +9,10 @@ dotenv.config();
 app.use(express.json({ limit: "100mb" }));
 app.use(cors());
 
+app.get('/warmUp',(req,res)=>{
+  return res.status(200).send();
+})
+
 
 app.get("/pdfToImages", async (req, res) => {
   const pdfUrl = req.headers["pdf-url"];
