@@ -9,11 +9,6 @@ dotenv.config();
 app.use(express.json({ limit: "100mb" }));
 app.use(cors());
 
-app.get('/warmUp',(req,res)=>{
-  return res.status(200).send();
-})
-
-
 app.get("/pdfToImages", async (req, res) => {
   const pdfUrl = req.headers["pdf-url"];
   try {
@@ -34,9 +29,13 @@ app.post("/imagesToPdf", async (req, res) => {
   try {
     const { dataUrls } = req.body;
     const pdf = await imgToPDF(dataUrls, imgToPDF.sizes.A4);
+
+    res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
+    res.setHeader('Content-Type', 'application/pdf');
     pdf.pipe(res);
   } catch (err) {
-    console.log("/imagesToPdf", err);
+    console.error("/imagesToPdf", err);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -45,5 +44,3 @@ const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log("server started");
 });
-
-module.exports = app;
